@@ -163,13 +163,13 @@ def get_route(hostname):
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     # Fill in start
-                    df.append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'echo reply'
+                    df.loc[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'echo reply'
                     # You should update your dataframe with the required column field responses here
                     # Fill in end
                     return df
                 else:
                 # Fill in start
-                 df.append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
+                 df.loc[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
                 # If there is an exception/error to your if statements, you should append that to your df here
                 # Fill in end
                 break
