@@ -116,6 +116,7 @@ def get_route(hostname):
             except Exception as e:
                  #print (e) # uncomment to view exceptions
                  continue
+
             else:
                 # Fill in start
                 # icmpheader = recvPacket[20:28]
@@ -123,23 +124,22 @@ def get_route(hostname):
                 types, = struct.unpack('b', recvPacket[20:21])
                 # Fetch the icmp type from the IP packet
                 # Fill in end
-
-                router_ip = ""
                 try:  # try to fetch the hostname of the router that returned the packet - don't confuse with the hostname that you are tracing
-                    # Fill in start
-                    router_ip = addr[0]
-                    print(router_ip)
-                    routername = gethostbyaddr(router_ip)[0]
-                    print(routername)
-                    # Fill in end
+                # Fill in start
+                 router_ip = addr[0]
+                 print(router_ip)
+                 routername = gethostbyaddr(router_ip)[0]
+                 print(routername)
+                # Fill in end
                 except herror:  # if the router host does not provide a hostname use "hostname not returnable"
-                    # Fill in start
-                    routername = "hostname not returnable"
-                    # Fill in end
+                # Fill in start
+                 routername = "hostname not returnable"
+                # Fill in end
 
                 if types == 11:
                     bytes = struct.calcsize("d")
-                    timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
+                    timeSent = struct.unpack("d", recvPacket[28:28 +
+                                                                bytes])[0]
                     # Fill in start
                     df.append(
                         {'Hop Count': ttl, 'Try': tries, 'IP': router_ip, 'Hostname': routername,
@@ -166,65 +166,11 @@ def get_route(hostname):
                     # Fill in end
                     return df
                 else:
-                    # Fill in start
-                    df._append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
-                    # If there is an exception/error to your if statements, you should append that to your df here
-                    # Fill in end
-                    break
-            # else:
-            #     # Fill in start
-            #     # icmpheader = recvPacket[20:28]
-            #     # types, code, checksum, packetid, sequence = struct.unpack("bbHHh", icmpheader)
-            #     types, = struct.unpack('b', recvPacket[20:21])
-            #     # Fetch the icmp type from the IP packet
-            #     # Fill in end
-            #     try:  # try to fetch the hostname of the router that returned the packet - don't confuse with the hostname that you are tracing
-            #     # Fill in start
-            #      router_ip = addr[0]
-            #      print(router_ip)
-            #      routername = gethostbyaddr(router_ip)[0]
-            #      print(routername)
-            #     # Fill in end
-            #     except herror:  # if the router host does not provide a hostname use "hostname not returnable"
-            #     # Fill in start
-            #      routername = "hostname not returnable"
-            #     # Fill in end
-            #
-            #     if types == 11:
-            #         bytes = struct.calcsize("d")
-            #         timeSent = struct.unpack("d", recvPacket[28:28 +
-            #                                                     bytes])[0]
-            #         # Fill in start
-            #         df.append(
-            #             {'Hop Count': ttl, 'Try': tries, 'IP': router_ip, 'Hostname': routername,
-            #              'Response Code': 'ttl exceded'},
-            #             ignore_index=True)
-            #         # You should update your dataframe with the required column field responses here
-            #         # Fill in end
-            #     elif types == 3:
-            #         bytes = struct.calcsize("d")
-            #         timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
-            #         # Fill in start
-            #         df = df.append(  # Replace loc with append, and fill in all columns
-            #             {'Hop Count': ttl, 'Try': tries, 'IP': router_ip, 'Hostname': routername,
-            #              'Response Code': 'not reachable'},
-            #             ignore_index=True)
-            #         # You should update your dataframe with the required column field responses here
-            #         # Fill in end
-            #     elif types == 0:
-            #         bytes = struct.calcsize("d")
-            #         timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
-            #         # Fill in start
-            #         df.loc[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'echo reply'
-            #         # You should update your dataframe with the required column field responses here
-            #         # Fill in end
-            #         return df
-            #     else:
-            #     # Fill in start
-            #      df._append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
-            #     # If there is an exception/error to your if statements, you should append that to your df here
-            #     # Fill in end
-            #     break
+                # Fill in start
+                 df._append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
+                # If there is an exception/error to your if statements, you should append that to your df here
+                # Fill in end
+                break
     return df
 
 
