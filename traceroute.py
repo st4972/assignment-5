@@ -121,19 +121,19 @@ def get_route(hostname):
                 # Fill in start
                 # icmpheader = recvPacket[20:28]
                 # types, code, checksum, packetid, sequence = struct.unpack("bbHHh", icmpheader)
-                types, = struct.unpack('b', recvPacket[20:21])
+                types, = struct.unpack('b', recvPacket[20:28])
                 # Fetch the icmp type from the IP packet
                 # Fill in end
-                try:  # try to fetch the hostname of the router that returned the packet - don't confuse with the hostname that you are tracing
+                #try:  # try to fetch the hostname of the router that returned the packet - don't confuse with the hostname that you are tracing
                 # Fill in start
-                 router_ip = addr[0]
-                 print(router_ip)
-                 routername = gethostbyaddr(router_ip)[0]
-                 print(routername)
+                router_ip = addr[0]
+                print(router_ip)
+                routername = gethostbyaddr(router_ip)[0]
+                print(routername)
                 # Fill in end
-                except herror:  # if the router host does not provide a hostname use "hostname not returnable"
+                #except herror:  # if the router host does not provide a hostname use "hostname not returnable"
                 # Fill in start
-                 routername = "hostname not returnable"
+                routername = "hostname not returnable"
                 # Fill in end
 
                 if types == 11:
@@ -167,7 +167,7 @@ def get_route(hostname):
                     return df
                 else:
                 # Fill in start
-                 df._append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
+                 df.append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
                 # If there is an exception/error to your if statements, you should append that to your df here
                 # Fill in end
                 break
