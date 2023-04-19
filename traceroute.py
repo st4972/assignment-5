@@ -96,7 +96,7 @@ def get_route(hostname):
                 if whatReady[0] == []:  # Timeout
                 # Fill in start
                  df = df._append(
-                    {'Hop Count': ttl, 'Try': tries, 'Response Code': 'timeout'},
+                    {'Hop Count': ttl, 'Try': tries, 'Hostname':destAddr,'Response Code': 'timeout'},
                     ignore_index=True)
                  print(df)
                 # append response to your dataframe including hop #, try #, and "timeout" responses as required by the acceptance criteria
@@ -104,24 +104,28 @@ def get_route(hostname):
                 # Fill in end
                 recvPacket, addr = mySocket.recvfrom(1024)
                 timeReceived = time.time()
+                print(addr)
                 timeLeft = timeLeft - howLongInSelect
                 if timeLeft <= 0:
             # Fill in start
-                  df = df._append({'Hop Count': ttl, 'Try': tries,'Response Code': 'timeout'},
+                  df = df._append({'Hop Count': ttl, 'Try': tries,'Hostname':destAddr,'Response Code': 'timeout'},
                            ignore_index=True)
                   print(df)
             # append response to your dataframe including hop #, try #, and "timeout" responses as required by the acceptance criteria
             # print (df)
             # Fill in end
             except Exception as e:
-                 #print (e) # uncomment to view exceptions
+                 print (e) # uncomment to view exceptions
                  continue
-
             else:
                 # Fill in start
                 # icmpheader = recvPacket[20:28]
                 # types, code, checksum, packetid, sequence = struct.unpack("bbHHh", icmpheader)
                 types, = struct.unpack('b', recvPacket[20:21])
+                router_ip = addr[0]
+                print(router_ip)
+                routername = gethostbyaddr(router_ip)[0]
+                print(routername)
                 # Fetch the icmp type from the IP packet
                 # Fill in end
                 try:  # try to fetch the hostname of the router that returned the packet - don't confuse with the hostname that you are tracing
@@ -134,6 +138,7 @@ def get_route(hostname):
                 except herror:  # if the router host does not provide a hostname use "hostname not returnable"
                 # Fill in start
                  routername = "hostname not returnable"
+                 print(routername)
                 # Fill in end
 
                 if types == 11:
