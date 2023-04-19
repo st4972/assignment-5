@@ -49,20 +49,18 @@ def build_packet():
     # then finally the complete packet was sent to the destination.
 
     # Make the header in a similar way to the ping exercise.
-    icmpType = 8  # ICMP Echo Request
-    icmpCode = 0
-    icmpChecksum = 0
     icmpID = os.getpid() & 0xFFFF  # Return the current process i
-    icmpSeq = 1
+    myChecksum = 0
     # Append checksum to the header.
-    header = struct.pack("bbHHh", icmpType, icmpCode, icmpChecksum, icmpID, icmpSeq)
-
-    # Calculate the checksum and append it to the header
-    icmpChecksum = checksum(header)
-    header = struct.pack("bbHHh", icmpType, icmpCode, icmpChecksum, icmpID, icmpSeq)
-
-    # Add some data to the packet
+    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, icmpID, 1)
     data = struct.pack("d", time.time())
+    if sys.platform == 'darwin':
+        # Convert 16-bit integers from host to network  byte order
+        myChecksum = htons(myChecksum) & 0xffff
+    else:
+        myChecksum = htons(myChecksum)
+
+    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, icmpID, 1)
     # Don’t send the packet yet , just return the final packet in this function.
     # Fill in end
 
@@ -84,6 +82,7 @@ def get_route(hostname):
             # Make a raw socket named mySocket
             mySocket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)
 
+
             # Fill in end
 
             mySocket.setsockopt(IPPROTO_IP, IP_TTL, struct.pack('I', ttl))
@@ -95,21 +94,22 @@ def get_route(hostname):
                 startedSelect = time.time()
                 whatReady = select.select([mySocket], [], [], timeLeft)
                 howLongInSelect = (time.time() - startedSelect)
+
                 if whatReady[0] == []:  # Timeout
                 # Fill in start
-                 df = df.append(
-                    {'Hop Count': ttl, 'Try': tries, 'IP': None, 'Hostname': None, 'Response Code': 'timeout'},
+                 df = df._append(
+                    {'Hop Count': ttl, 'Try': tries, 'Response Code': 'timeout'},
                     ignore_index=True)
                  print(df)
                 # append response to your dataframe including hop #, try #, and "timeout" responses as required by the acceptance criteria
                 # print (df)
                 # Fill in end
-                recvPacket, addr = mySocket.recvfrom(1024)
-                timeReceived = time.time()
-                timeLeft = timeLeft - howLongInSelect
+                 recvPacket, addr = mySocket.recvfrom(1024)
+                 timeReceived = time.time()
+                 timeLeft = timeLeft - howLongInSelect
                 if timeLeft <= 0:
             # Fill in start
-                  df = df.append({'Hop Count': ttl, 'Try': tries, 'IP': None, 'Hostname': None, 'Response Code': 'timeout'},
+                  df = df._append({'Hop Count': ttl, 'Try': tries,'Response Code': 'timeout'},
                            ignore_index=True)
                   print(df)
             # append response to your dataframe including hop #, try #, and "timeout" responses as required by the acceptance criteria
@@ -121,15 +121,18 @@ def get_route(hostname):
 
             else:
                 # Fill in start
-                icmpheader = recPacket[20:28]
+                icmpheader = recvPacket[20:28]
                 types, code, checksum, packetid, sequence = struct.unpack("bbHHh", icmpheader)
                 # Fetch the icmp type from the IP packet
                 # Fill in end
                 try:  # try to fetch the hostname of the router that returned the packet - don't confuse with the hostname that you are tracing
                 # Fill in start
                  router_ip = addr[0]
+                 print(router_ip)
                  routername = gethostbyaddr(router_ip)[0]
+                 print(routername)
                 # Fill in end
+
                 except herror:  # if the router host does not provide a hostname use "hostname not returnable"
                 # Fill in start
                  routername = "hostname not returnable"
@@ -140,27 +143,33 @@ def get_route(hostname):
                     timeSent = struct.unpack("d", recvPacket[28:28 +
                                                                 bytes])[0]
                     # Fill in start
-                    df.loc[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'ttl exceded'
+                    df.append(
+                        {'Hop Count': ttl, 'Try': tries, 'IP': router_ip, 'Hostname': routername,
+                         'Response Code': 'ttl exceded'},
+                        ignore_index=True)
                     # You should update your dataframe with the required column field responses here
                     # Fill in end
                 elif types == 3:
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     # Fill in start
-                    df.loc[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'not reachable'
+                    df = df.append(  # Replace loc with append, and fill in all columns
+                        {'Hop Count': ttl, 'Try': tries, 'IP': router_ip, 'Hostname': routername,
+                         'Response Code': 'not reachable'},
+                        ignore_index=True)
                     # You should update your dataframe with the required column field responses here
                     # Fill in end
                 elif types == 0:
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     # Fill in start
-                    df.loc[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'echo reply'
+                    df._append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'echo reply'
                     # You should update your dataframe with the required column field responses here
                     # Fill in end
                     return df
                 else:
                 # Fill in start
-                 df.loc[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown response'
+                 df._append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
                 # If there is an exception/error to your if statements, you should append that to your df here
                 # Fill in end
                 break
