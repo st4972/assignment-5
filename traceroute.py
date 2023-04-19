@@ -96,7 +96,7 @@ def get_route(hostname):
 
                 if whatReady[0] == []:  # Timeout
                 # Fill in start
-                 df = df._append(
+                 df = df.append(
                     {'Hop Count': ttl, 'Try': tries, 'Response Code': 'timeout'},
                     ignore_index=True)
                  print(df)
@@ -108,7 +108,7 @@ def get_route(hostname):
                 timeLeft = timeLeft - howLongInSelect
                 if timeLeft <= 0:
             # Fill in start
-                  df = df._append({'Hop Count': ttl, 'Try': tries,'Response Code': 'timeout'},
+                  df = df.append({'Hop Count': ttl, 'Try': tries,'Response Code': 'timeout'},
                            ignore_index=True)
                   print(df)
             # append response to your dataframe including hop #, try #, and "timeout" responses as required by the acceptance criteria
@@ -163,13 +163,13 @@ def get_route(hostname):
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     # Fill in start
-                    df._append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'echo reply'
+                    df.append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'echo reply'
                     # You should update your dataframe with the required column field responses here
                     # Fill in end
                     return df
                 else:
                 # Fill in start
-                 df._append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
+                 df.append[(df['Hop Count'] == ttl) & (df['Try'] == tries), 'Response Code'] = 'unknown'
                 # If there is an exception/error to your if statements, you should append that to your df here
                 # Fill in end
                 break
