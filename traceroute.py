@@ -122,7 +122,7 @@ def get_route(hostname):
             else:
                 # Fill in start
                 icmpheader = recvPacket[20:28]
-                type, code, checksum, packetid, sequence = struct.unpack("bbHHh", icmpheader)
+                types, code, checksum, packetid, sequence = struct.unpack("bbHHh", icmpheader)
                 # Fetch the icmp type from the IP packet
                 # Fill in end
                 try:  # try to fetch the hostname of the router that returned the packet - don't confuse with the hostname that you are tracing
