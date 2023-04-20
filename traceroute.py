@@ -11,7 +11,7 @@ import pandas as pd
 ICMP_ECHO_REQUEST = 8
 MAX_HOPS = 60
 TIMEOUT = 2.0
-TRIES = 1
+TRIES = 5
 
 # The packet that we shall send to each router along the path is the ICMP echo
 # request packet, which is exactly what we had used in the ICMP ping exercise.
@@ -82,18 +82,20 @@ def get_route(hostname):
             # Make a raw socket named mySocket
             icmp = getprotobyname("icmp")
             mySocket = socket(AF_INET, SOCK_RAW, icmp)
+            print(mySocket)
             # Fill in end
 
             mySocket.setsockopt(IPPROTO_IP, IP_TTL, struct.pack('I', ttl))
             mySocket.settimeout(TIMEOUT)
             try:
                 d = build_packet()
+                print(d)
                 mySocket.sendto(d, (hostname, 0))
                 t = time.time()
                 startedSelect = time.time()
                 whatReady = select.select([mySocket], [], [], timeLeft)
                 howLongInSelect = (time.time() - startedSelect)
-                print(whatReady)
+                print(whatReady[0])
                 print(howLongInSelect)
                 if whatReady[0] == []:  # Timeout
                 # Fill in start
@@ -115,8 +117,7 @@ def get_route(hostname):
             # print (df)
             # Fill in end
             except Exception as e:
-                 pass
-                 print (e) # uncomment to view exceptions
+                 print(e) # uncomment to view exceptions
                  continue
             else:
                 # Fill in start
@@ -145,8 +146,8 @@ def get_route(hostname):
                     timeSent = struct.unpack("d", recvPacket[28:28 +
                                                                 bytes])[0]
                     # Fill in start
-                    df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [timeReceived-t], 'IP': [router_ip],
-                                                      'Hostname': [routername], 'Response Code': ['ttl exceded']})],
+                    df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'IP': [router_ip],
+                                                      'Hostname': [routername], 'Response Code': [11]})],
                                    ignore_index=True)
                     # You should update your dataframe with the required column field responses here
                     # Fill in end
@@ -154,8 +155,8 @@ def get_route(hostname):
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     # Fill in start
-                    df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [timeReceived-t], 'IP': [router_ip],
-                                                      'Hostname': [routername], 'Response Code': ['not reachable']})],
+                    df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'IP': [router_ip],
+                                                      'Hostname': [routername], 'Response Code': [3]})],
                                    ignore_index=True)
                     # You should update your dataframe with the required column field responses here
                     # Fill in end
@@ -163,13 +164,17 @@ def get_route(hostname):
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     # Fill in start
-                    df.loc[(df['Hop Count'] == ttl) & (df['Try'] == timeReceived-t), 'Response Code'] = 'echo reply'
+                    df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'IP': [router_ip],
+                                                      'Hostname': [routername], 'Response Code': [0]})],
+                                   ignore_index=True)
                     # You should update your dataframe with the required column field responses here
                     # Fill in end
                     return df
                 else:
                 # Fill in start
-                 df.loc[(df['Hop Count'] == ttl) & (df['Try'] == timeReceived-t), 'Response Code'] = 'Unknown host'
+                 df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries],
+                                                  'Response Code': ['no idea']})],
+                               ignore_index=True)
                 # If there is an exception/error to your if statements, you should append that to your df here
                 # Fill in end
                 break
