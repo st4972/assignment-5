@@ -73,7 +73,7 @@ def get_route(hostname):
             # Fill in start
             # Make a raw socket named mySocket
             icmp = getprotobyname("icmp")
-            mySocket = socket(AF_INET, SOCK_DGRAM, icmp)
+            mySocket = socket(AF_INET, SOCK_RAW, icmp)
             print(mySocket)
             # Fill in end
 
@@ -98,6 +98,7 @@ def get_route(hostname):
                 # print (df)
                 # Fill in end
                 recvPacket, addr = mySocket.recvfrom(1024)
+                print(addr)
                 timeReceived = time.time()
                 print(timeLeft)
                 timeLeft = timeLeft - howLongInSelect
