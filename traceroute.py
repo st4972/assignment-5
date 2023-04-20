@@ -48,24 +48,16 @@ def build_packet():
     # then finally the complete packet was sent to the destination.
 
     # Make the header in a similar way to the ping exercise.
-    icmpID = os.getpid() & 0xFFFF  # Return the current process i
+    icmpID = os.getpid() & 0xFFFF
     myChecksum = 0
-    # Append checksum to the header.
     header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, icmpID, 1)
     data = struct.pack("d", time.time())
     myChecksum = checksum(header + data)
     if sys.platform == 'darwin':
-        # Convert 16-bit integers from host to network  byte order
         myChecksum = htons(myChecksum) & 0xffff
     else:
         myChecksum = htons(myChecksum)
-
     header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, icmpID, 1)
-    # Don’t send the packet yet , just return the final packet in this function.
-    # Fill in end
-
-    # So the function ending should look like this
-
     packet = header + data
     return packet
 
@@ -81,7 +73,7 @@ def get_route(hostname):
             # Fill in start
             # Make a raw socket named mySocket
             icmp = getprotobyname("icmp")
-            mySocket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)
+            mySocket = socket.socket(socket.AF_INET, socket.SOCK_RAW, icmp)
             print(mySocket)
             # Fill in end
 
@@ -123,9 +115,9 @@ def get_route(hostname):
                  continue
             else:
                 # Fill in start
-                # icmpheader = recvPacket[20:28]
-                # types, code, checksum, packetid, sequence = struct.unpack("bbHHh", icmpheader)
-                types, = struct.unpack('b', recvPacket[20:21])
+                icmpheader = recvPacket[20:28]
+                types, code, checksum, packetid, sequence = struct.unpack("bbHHh", icmpheader)
+                #types, = struct.unpack('b', recvPacket[20:21])
                 router_ip = addr[0]
                 print(router_ip)
                 routername = gethostbyaddr(router_ip)[0]
