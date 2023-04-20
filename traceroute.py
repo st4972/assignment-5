@@ -10,7 +10,7 @@ import pandas as pd
 
 ICMP_ECHO_REQUEST = 8
 MAX_HOPS = 60
-TIMEOUT = 2.0
+TIMEOUT = 5.0
 TRIES = 5
 
 # The packet that we shall send to each router along the path is the ICMP echo
