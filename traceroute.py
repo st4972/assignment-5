@@ -95,7 +95,7 @@ def get_route(hostname):
                 startedSelect = time.time()
                 whatReady = select.select([mySocket], [], [], timeLeft)
                 howLongInSelect = (time.time() - startedSelect)
-                print(whatReady[0])
+                print(whatReady[laddr])
                 print(howLongInSelect)
                 if whatReady[0] == []:  # Timeout
                 # Fill in start
