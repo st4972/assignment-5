@@ -10,7 +10,7 @@ import pandas as pd
 
 ICMP_ECHO_REQUEST = 8
 MAX_HOPS = 60
-TIMEOUT = 2.0
+TIMEOUT = 3.0
 TRIES = 5
 
 # The packet that we shall send to each router along the path is the ICMP echo
@@ -72,12 +72,12 @@ def get_route(hostname):
             print(tries)
             # Fill in start
             # Make a raw socket named mySocket
-            icmp = getprotobyname("icmp")
-            mySocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP)
+            # icmp = getprotobyname("icmp")
+            # mySocket = socket(AF_INET, SOCK_RAW, icmp)
+            mySocket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)
+            mySocket.setsockopt(IPPROTO_IP, IP_TTL, struct.pack('I', ttl))
             print(mySocket)
             # Fill in end
-
-            mySocket.setsockopt(IPPROTO_IP, IP_TTL, struct.pack('I', ttl))
             mySocket.settimeout(TIMEOUT)
             try:
                 d = build_packet()
@@ -89,6 +89,8 @@ def get_route(hostname):
                 howLongInSelect = (time.time() - startedSelect)
                 print(whatReady[0])
                 print(howLongInSelect)
+                recvPacket, addr = mySocket.recvfrom(1024)
+                print(addr)
                 if whatReady[0] == []:  # Timeout
                 # Fill in start
                 #  df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'Hostname': [destAddr],
@@ -142,8 +144,7 @@ def get_route(hostname):
 
                 if types == 11:
                     bytes = struct.calcsize("d")
-                    timeSent = struct.unpack("d", recvPacket[28:28 +
-                                                                bytes])[0]
+                    timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     # Fill in start
                     df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'IP': [router_ip],
                                                       'Hostname': [routername], 'Response Code': [11]})])
@@ -180,4 +181,4 @@ def get_route(hostname):
 
 
 if __name__ == '__main__':
-    get_route("google.co.il")
+    get_route("google.com")
