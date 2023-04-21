@@ -91,8 +91,11 @@ def get_route(hostname):
                 print(howLongInSelect)
                 if whatReady[0] == []:  # Timeout
                 # Fill in start
-                 df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'Hostname': [destAddr],
-                                                   'Response Code': ['timeout1']})])
+                #  df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'Hostname': [destAddr],
+                #                                    'Response Code': ['timeout1']})])
+                 resp = [[ttl, tries, 'NaN', destAddr, 'timeout1']]
+                 new_df = pd.DataFrame(resp, columns=['Hop Count', 'Try', 'IP', 'Hostname', 'Response Code'])
+                 df = pd.concat([df, new_df], ignore_index=True)
                  print(df)
                 # append response to your dataframe including hop #, try #, and "timeout" responses as required by the acceptance criteria
                 # print (df)
@@ -105,9 +108,12 @@ def get_route(hostname):
                 print(timeLeft)
                 if timeLeft <= 0:
             # Fill in start
-                  df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'Hostname': [destAddr],
-                                                    'Response Code': ['timeout2']})])
-                  print(df)
+            #       df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'Hostname': [destAddr],
+            #                                         'Response Code': ['timeout2']})])
+                 resp = [[ttl, tries, 'NaN', destAddr, 'timeout2']]
+                 new_df = pd.DataFrame(resp, columns=['Hop Count', 'Try', 'IP', 'Hostname', 'Response Code'])
+                 df = pd.concat([df, new_df], ignore_index=True)
+                 print(df)
             # append response to your dataframe including hop #, try #, and "timeout" responses as required by the acceptance criteria
             # print (df)
             # Fill in end
