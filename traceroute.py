@@ -1,3 +1,4 @@
+
 from socket import *
 import socket
 import os
@@ -67,6 +68,7 @@ def get_route(hostname):
 
             # Fill in start
             # Make a raw socket named mySocket
+            #icmp = socket.getprotobyname("icmp")
             mySocket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
             # Fill in end
 
@@ -127,6 +129,8 @@ def get_route(hostname):
                     resp = [[ttl, tries, router_ip, routername[0], '11']]
                     new_df = pd.DataFrame(resp, columns=['Hop Count', 'Try', 'IP', 'Hostname', 'Response Code'])
                     df = pd.concat([df, new_df], ignore_index=True)
+                    # df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'IP': [router_ip],
+                    #                                   'Hostname': [routername], 'Response Code': [11]})])
                     # Fill in start
                     # You should update your dataframe with the required column field responses here
 
