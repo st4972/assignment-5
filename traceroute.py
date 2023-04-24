@@ -60,6 +60,7 @@ def get_route(hostname):
     timeLeft = TIMEOUT
     df = pd.DataFrame(columns=['Hop Count', 'Try', 'IP', 'Hostname', 'Response Code'])
     destAddr = gethostbyname(hostname)
+    print(f"this is destAddr : {destAddr}")
 
     for ttl in range(1, MAX_HOPS):
         for tries in range(TRIES):
@@ -124,7 +125,7 @@ def get_route(hostname):
                 if types == 11:
                     bytes = struct.calcsize("d")
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
-                    resp = [[ttl, tries, router_ip, destAddr, '11']]
+                    resp = [[ttl, tries, router_ip, routername[0], '11']]
                     new_df = pd.DataFrame(resp, columns=['Hop Count', 'Try', 'IP', 'Hostname', 'Response Code'])
                     df = pd.concat([df, new_df], ignore_index=True)
                     # df = pd.concat([df, pd.DataFrame({'Hop Count': [ttl], 'Try': [tries], 'IP': [router_ip],
@@ -138,7 +139,7 @@ def get_route(hostname):
                     timeSent = struct.unpack("d", recvPacket[28:28 + bytes])[0]
                     # Fill in start
 
-                    resp = [[ttl, tries, router_ip, destAddr, '3']]
+                    resp = [[ttl, tries, router_ip, routername[0], '3']]
                     new_df = pd.DataFrame(resp, columns=['Hop Count', 'Try', 'IP', 'Hostname', 'Response Code'])
                     df = pd.concat([df, new_df], ignore_index=True)
                     # You should update your dataframe with the required column field responses here
@@ -149,7 +150,7 @@ def get_route(hostname):
                     # Fill in start
                     # You should update your dataframe with the required column field responses here
 
-                    resp = [[ttl, tries, router_ip, destAddr, '0']]
+                    resp = [[ttl, tries, router_ip, routername[0], '0']]
                     new_df = pd.DataFrame(resp, columns=['Hop Count', 'Try', 'IP', 'Hostname', 'Response Code'])
                     df = pd.concat([df, new_df], ignore_index=True)
                     # Fill in end
@@ -158,7 +159,7 @@ def get_route(hostname):
                  # Fill in start
                  # If there is an exception/error to your if statements, you should append that to your df here
 
-                 resp = [[ttl, tries, router_ip, destAddr, 'no idea']]
+                 resp = [[ttl, tries, router_ip, routername[0], 'no idea']]
                  new_df = pd.DataFrame(resp, columns=['Hop Count', 'Try', 'IP', 'Hostname', 'Response Code'])
                  df = pd.concat([df, new_df], ignore_index=True)
                  # Fill in end
