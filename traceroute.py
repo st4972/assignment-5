@@ -97,7 +97,7 @@ def get_route(hostname):
                 if timeLeft <= 0:
                   # Fill in start
                   # append response to your dataframe including hop #, try #, and "timeout" responses as required by the acceptance criteria
-                    resp = [[ttl, tries, 'NaN', gethostbyaddr(addr[0]), 'timeout2']]
+                    resp = [[ttl, tries, 'NaN', destAddr, 'timeout2']]
                     new_df = pd.DataFrame(resp, columns=['Hop Count', 'Try', 'IP', 'Hostname', 'Response Code'])
                     df = pd.concat([df, new_df], ignore_index=True)
                     print(df)
