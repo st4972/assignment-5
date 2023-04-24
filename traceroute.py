@@ -81,6 +81,8 @@ def get_route(hostname):
                 startedSelect = time.time()
                 whatReady = select.select([mySocket], [], [], timeLeft)
                 howLongInSelect = (time.time() - startedSelect)
+                # print(f"this is howlonginselect:{howLongInSelect}")
+                # print(f"this is whatreddy[0] :{whatReady[0]}")
                 if whatReady[0] == []:  # Timeout
                  # Fill in start
                  # append response to your dataframe including hop #, try #, and "timeout" responses as required by the acceptance criteria
@@ -119,7 +121,7 @@ def get_route(hostname):
                  # Fill in end
                 except herror:  # if the router host does not provide a hostname use "hostname not returnable"
                  # Fill in start
-                 routername = "hostname not returnable"
+                 routername = ("hostname not returnable",)
                  print(routername)
                  # Fill in end
 
