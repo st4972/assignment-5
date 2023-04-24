@@ -89,7 +89,7 @@ def get_route(hostname):
                  # print (df)
                  # Fill in end
                 recvPacket, addr = mySocket.recvfrom(1024)
-                print(addr)
+                print(f"this is addr:{addr}")
                 timeReceived = time.time()
                 timeLeft = timeLeft - howLongInSelect
                 if timeLeft <= 0:
@@ -108,7 +108,7 @@ def get_route(hostname):
                 icmpheader = recvPacket[20:28]
                 types, code, checksum, packetid, sequence = struct.unpack("bbHHh", icmpheader)
                 router_ip = addr[0]
-                print(router_ip)
+                print(f"this is routers_ip:{router_ip}")
                 # Fill in end
                 try:  # try to fetch the hostname of the router that returned the packet - don't confuse with the hostname that you are tracing
                  # Fill in start
